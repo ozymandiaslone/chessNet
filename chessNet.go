@@ -310,3 +310,72 @@ func playGame(nn1, nn2 *NeuralNetwork) int {
 	
 }
 
+func hotEncode(fen string) [][]int {
+	// Split the fen into its respective fields
+	fenFields := strings.Split(fen, " ")
+
+	// create 2 dimensional slice to represent the hot encoded board info
+	board := make([][]int, 64)
+	for i := 0; i < 64; i++ {
+		board[i] = make([], 7)
+	}
+	
+	// stupid boring fen math
+	pieces := strings.Split(fenFields[0], "/")
+	// Remember there are eight rows in chess
+	for i := 0; i < 8; i++ {
+		for j := 0; j < len(fenFields[i]); j++ {
+			// calculate the index of the current sqare we're working with
+			id := i*8 + j
+
+			// Figure out the piece 
+			piece := pieces[i][j]
+			// Encode that shit
+			switch piece {
+			case "P":
+				board[id][1] = 1
+			case "N":
+				board[id][2] = 1
+			case "B":
+				board[id][3] = 1
+			case "R":
+				board[id][4] = 1
+			case "Q":
+				board[id][5] = 1
+			case "K":
+				board[id][6] = 1
+			case "p":
+				board[id][0] = 1
+				board[id][1] = 1
+			case "n":
+				board[id][2] = 1
+				board[id][0] = 1
+			case "b":
+				board[id][3] = 1
+				board[id][0] = 1
+			case "r":
+				board[id][4] = 1
+				board[id][0] = 1
+			case "q":
+				board[id][5] = 1
+				board[id][0] = 1
+			case "k":
+				board[id][6] = 1
+				board[id][0] = 1
+			default:
+				// If it aint a piece letter, it's gotta be a number for the empty squares
+				num, _ := strconv.Atoi(string(piece))
+				id += num - 1
+			}
+		}
+	}
+	// Now we add the turn. We gotta make a special 2d thingy to tack it on the end
+	turn := 0
+	if fenFields[1] == "b" {
+		turn == 1
+	}
+	board = append([]int{turn}, board...)\
+
+	return board
+}
+
